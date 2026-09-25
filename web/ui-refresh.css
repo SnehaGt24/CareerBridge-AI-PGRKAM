@@ -1,0 +1,328 @@
+:root{--navy:#102a43;--blue:#2563eb;--green:#0f9f75;--bg:#f4f7fb;--pale:#f7f9fc;--line:#e2e8f0;--text:#172033;--muted:#64748b;--red:#c24141;--shadow:0 12px 30px rgba(15,35,65,.08)}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(145deg,#eef4ff 0,#f8fafc 45%,#eefbf7 100%);min-height:100vh}.app{grid-template-columns:286px minmax(0,1fr)}.side{position:sticky;top:0;height:100vh;padding:24px 18px;background:linear-gradient(180deg,#0d2844,#12385d);box-shadow:8px 0 35px rgba(15,35,60,.12);overflow-y:auto}.brand{padding:4px 8px 20px;border-bottom:1px solid rgba(255,255,255,.12)}.mark{background:linear-gradient(135deg,#fff,#cde6ff);box-shadow:0 8px 18px rgba(0,0,0,.18)}.side nav{gap:5px;margin-top:18px}.nav-label{font-size:9px;letter-spacing:.16em;font-weight:800;color:#7fa3c6;padding:15px 12px 5px}.nav{border:0;padding:11px 12px;border-radius:10px;color:#d5e4f2;transition:.2s}.nav:hover{background:rgba(255,255,255,.1);color:#fff;transform:translateX(2px)}.nav.active{background:#fff;color:#17385f;box-shadow:0 8px 20px rgba(0,0,0,.13)}main{max-width:1240px;padding:34px 46px}.top{padding-bottom:20px;border-bottom:1px solid rgba(203,213,225,.8)}.top h2{font-size:28px;letter-spacing:-.03em}.online{box-shadow:0 4px 12px rgba(15,159,117,.1)}.hero{position:relative;overflow:hidden;padding:25px 28px;background:linear-gradient(120deg,#fff,#f5f9ff);box-shadow:var(--shadow);border:0}.hero:after{content:"";position:absolute;width:140px;height:140px;border-radius:50%;right:-50px;top:-70px;background:linear-gradient(135deg,rgba(37,99,235,.16),rgba(15,159,117,.08))}.hero h3{letter-spacing:-.025em}.panel,.chat,.match-card,.uni-card,.plan-head{border:1px solid rgba(226,232,240,.9);box-shadow:var(--shadow)}.panel{padding:24px}.form-grid{gap:18px}.form-grid label{font-size:11px;letter-spacing:.02em;color:#334155}.form-grid input,.form-grid select,.form-grid textarea,.composer input{border:1px solid #d7e0ea;padding:13px 14px;outline:none;transition:.2s}.form-grid input:focus,.form-grid select:focus,.form-grid textarea:focus,.composer input:focus{border-color:#6695f3;box-shadow:0 0 0 4px rgba(37,99,235,.1)}.primary,.composer button{background:linear-gradient(135deg,#2563eb,#1d4ed8);box-shadow:0 7px 15px rgba(37,99,235,.2);transition:.2s}.primary:hover,.composer button:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(37,99,235,.25)}.journey{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 18px}.journey button{text-align:left;border:1px solid var(--line);background:#fff;border-radius:15px;padding:16px;display:grid;grid-template-columns:32px 1fr;gap:2px 10px;cursor:pointer;box-shadow:0 6px 18px rgba(15,35,65,.05);transition:.2s}.journey button:hover{border-color:#93b4f8;transform:translateY(-2px);box-shadow:var(--shadow)}.journey span{grid-row:1/3;width:30px;height:30px;display:grid;place-items:center;background:#e8f0ff;color:#2458bb;border-radius:9px;font-size:12px;font-weight:800}.journey b{font-size:12px}.journey small{font-size:10px;color:var(--muted);line-height:1.35}.match-card{transition:.2s}.match-card:hover{transform:translateY(-2px)}.match-card.top{border:1px solid #60bf9f;box-shadow:0 12px 28px rgba(15,159,117,.12)}.score{letter-spacing:-.04em}.tag{font-weight:700}.metric-grid>div{box-shadow:0 6px 18px rgba(15,35,65,.06)}.success,.warning,.error,.loading{box-shadow:0 5px 15px rgba(15,35,65,.05)}footer{padding:22px 0 6px}.side-card{margin-top:25px;background:rgba(255,255,255,.05)}
+@media(max-width:1050px){.journey{grid-template-columns:repeat(2,1fr)}main{padding:28px}}@media(max-width:900px){.app{display:block}.side{position:relative;height:auto;padding:16px}.brand{border:0;padding-bottom:10px}.side nav{display:flex;overflow-x:auto;gap:7px;margin-top:8px;padding-bottom:5px}.nav-label,.side-card{display:none}.nav{white-space:nowrap;background:rgba(255,255,255,.06);padding:10px}.nav.active{background:#fff}main{padding:22px 15px}.top{margin-bottom:18px}.online{display:inline-block;margin-top:12px}.journey{grid-template-columns:1fr 1fr}}@media(max-width:560px){.journey{grid-template-columns:1fr}.match-card{grid-template-columns:1fr}.score{display:flex;align-items:center;gap:6px}.score small{display:inline}.action-row{align-items:stretch;flex-direction:column}.top h2{font-size:24px}}
+
+.contact-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.contact-steps span{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px}.contact-steps b{display:inline-grid;place-items:center;width:24px;height:24px;margin-right:7px;border-radius:7px;background:#e8f0ff;color:#2458bb}.contact-compose{margin-top:16px}.contact-compose textarea{font:inherit;border-radius:10px;resize:vertical}@media(max-width:760px){.contact-steps{grid-template-columns:1fr}}
+
+.contact-lookup{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-bottom:16px;font-size:13px;font-weight:700}.contact-lookup input{grid-column:1;border:1px solid #d7e0ea;border-radius:10px;padding:12px;font:inherit}.contact-lookup button{grid-column:2;grid-row:2}@media(max-width:760px){.contact-lookup{grid-template-columns:1fr}.contact-lookup button{grid-column:1;grid-row:auto}}
+
+/* CareerBridge accessibility + light readability pass */
+:root{
+  --bg:#f4f7fb;
+  --panel:#ffffff;
+  --panel2:#f8fafc;
+  --line:#dbe3ec;
+  --text:#172033;
+  --muted:#5f6f82;
+  --accent:#2563eb;
+  --accent2:#6366f1;
+  --good:#0f9f75;
+  --warn:#b7791f;
+  --bad:#c24141;
+  --shadow:0 12px 30px rgba(15,35,65,.08);
+}
+
+body{
+  background:linear-gradient(145deg,#eef4ff 0%,#f8fafc 48%,#eefbf7 100%);
+  color:var(--text);
+}
+
+/* Keep the navigation dark, but make the product workspace light and readable. */
+.main{color:var(--text)}
+.topbar{
+  background:rgba(255,255,255,.88);
+  border-bottom-color:#dbe3ec;
+}
+.topbar h1,.page-intro h2,.panel h3,.job-card h3,.application-card h3,
+.skill-card h3,.resource-grid h3,.saved-profile-card h3,.prompt-panel h3,
+.interview-grid h3,.section-title h3{color:#172033}
+.eyebrow,.section-kicker{color:#64748b}
+.page-intro p,.panel p,.job-card p,.application-card p,.skill-card p,
+.resource-grid p,.saved-profile-card p{color:#5f6f82}
+
+.panel,.prompt-panel,.chat,.job-card,.application-card,.skill-card,
+.resource-grid article,.saved-profile-card,.plan-head,.match-card,
+.uni-card{
+  background:#fff;
+  color:#172033;
+  border-color:#dbe3ec;
+  box-shadow:0 10px 26px rgba(15,35,65,.06);
+}
+
+.three-col .panel{background:#fff}
+
+/* Recruiter Connect / forms */
+.form-grid label{color:#475569}
+.form-grid input,.form-grid textarea,.form-grid select,
+.inline-search input,.composer input,#safetyText,
+.contact-lookup input,.contact-compose textarea,
+.edit-field select,.edit-field textarea{
+  background:#fff;
+  color:#172033;
+  border-color:#cbd5e1;
+  caret-color:#2563eb;
+}
+.form-grid input::placeholder,.form-grid textarea::placeholder,
+.inline-search input::placeholder,.composer input::placeholder,
+.contact-lookup input::placeholder,.contact-compose textarea::placeholder,
+#safetyText::placeholder{color:#94a3b8}
+.form-grid input:focus,.form-grid textarea:focus,.form-grid select:focus,
+.inline-search input:focus,.composer input:focus,#safetyText:focus,
+.contact-lookup input:focus,.contact-compose textarea:focus{
+  border-color:#6695f3;
+  box-shadow:0 0 0 4px rgba(37,99,235,.10);
+}
+
+/* Dark hard-coded cards from the original theme */
+.action-item,.diagnosis-card,.profile-chip,.result-card div,
+.chat-match,.timeline span,.pipe,.roadmap,.score-strip span{
+  background:#f8fafc;
+  color:#334155;
+  border-color:#dbe3ec;
+}
+.action-item .icon{background:#e8f0ff;color:#2458bb}
+.action-item p,.diagnosis-card p,.pipe span,.profile-chip span,
+.result-card span,.chat-match p,.roadmap{color:#64748b}
+
+.chat{background:#fff}
+.bubble{background:#eef4ff;color:#24344d;border:1px solid #d9e6f7}
+.user .bubble{background:#e7efff;color:#183b72;border-color:#c9dcfb}
+.prompt-panel button{
+  background:#f8fafc;
+  color:#334155;
+  border-color:#dbe3ec;
+}
+.prompt-panel button:hover{background:#eef4ff;border-color:#bfd2ee;color:#17385f}
+
+.job-card{background:#fff}
+.fit{color:#2563eb}
+.tag{border-color:#dbe3ec;background:#f8fafc;color:#475569}
+.tag.good{color:#147151;border-color:#b9e2d2;background:#e8f7f0}
+.tag.gap{color:#875d0a;border-color:#ead8a8;background:#fff8e5}
+
+.application-card{background:#fff}
+.status-badge{background:#edf3f8;color:#35506d}
+.status-applied{background:#e8f0ff;color:#2458bb}
+.status-shortlisted{background:#e8f7f0;color:#147151}
+.status-interview{background:#fff3d6;color:#875d0a}
+.status-offer{background:#e6f5ef;color:#17664e}
+.status-rejected{background:#fdeaea;color:#a33e3e}
+
+.primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-color:#2563eb}
+.secondary{background:#fff;color:#2458bb;border-color:#9bb9e7}
+.text-btn{color:#2563eb}
+.pill{background:#e8f0ff;color:#2458bb}
+
+.success{background:#e8f7f0;color:#17664e;border-color:#b9e2d2}
+.error{background:#fdeaea;color:#a33e3e;border-color:#efb6bd}
+.warning{background:#fff8e5;color:#7a560d;border-color:#ead8a8}
+.safe{background:#e8f7f0;color:#17664e;border-color:#b9e2d2}
+
+/* Improve the dark three-step cards shown on Recruiter Connect. */
+#recruiter .three-col .panel{
+  background:linear-gradient(145deg,#ffffff,#f8fbff);
+  border:1px solid #dbe3ec;
+}
+#recruiter .three-col .panel .number{color:#2563eb}
+#recruiter .three-col .panel h3{color:#172033}
+#recruiter .three-col .panel p{color:#5f6f82}
+
+/* Dashboard hero remains polished without sacrificing contrast. */
+.dashboard-hero{
+  background:linear-gradient(135deg,#ffffff,#f4f8ff);
+  border-color:#dbe3ec;
+}
+.dashboard-hero h2{color:#172033}
+.dashboard-hero p{color:#5f6f82}
+.orbit-card{background:radial-gradient(circle,#eaf2ff,#fff 68%);border-color:#c9dcfb}
+.orbit-card span{color:#475569}
+.orbit-card small{color:#64748b}
+
+@media(max-width:620px){
+  .topbar{background:#fff}
+}
+
+/* =========================================================
+   CareerBridge — Full Light UI
+   Replaces the original dark surfaces across the entire app.
+   ========================================================= */
+:root{
+  --bg:#f6f9fd;
+  --panel:#ffffff;
+  --panel2:#f8fbff;
+  --line:#dfe7f1;
+  --text:#14213d;
+  --muted:#667892;
+  --accent:#2563eb;
+  --accent2:#4f46e5;
+  --good:#159570;
+  --warn:#b7791f;
+  --bad:#c24141;
+  --shadow:0 10px 30px rgba(31,56,88,.08);
+}
+
+html,body{background:#f6f9fd!important;color:var(--text)!important}
+body{background:linear-gradient(145deg,#f3f8ff 0%,#fbfdff 48%,#f1fbf8 100%)!important}
+
+/* Light sidebar */
+.sidebar{
+  width:276px!important;
+  background:rgba(255,255,255,.96)!important;
+  border-right:1px solid #dfe7f1!important;
+  box-shadow:8px 0 30px rgba(31,56,88,.05)!important;
+  backdrop-filter:blur(16px);
+}
+.brand{border-bottom:1px solid #edf1f6;padding:4px 10px 22px}
+.brand-mark{background:linear-gradient(135deg,#2563eb,#4f46e5)!important;color:#fff;box-shadow:0 7px 16px rgba(37,99,235,.18)}
+.brand strong{color:#19325d}
+.brand small{color:#8291a8!important}
+.nav{color:#53657d!important;background:transparent!important}
+.nav:hover{background:#f0f5ff!important;color:#17458e!important}
+.nav.active{background:#eaf2ff!important;color:#17458e!important;box-shadow:inset 3px 0 #2563eb,0 5px 14px rgba(37,99,235,.06)!important}
+.nav-label{color:#8a9ab0!important}
+.sidebar-foot{color:#7b8ca2!important}
+.status-dot{background:#16a36f!important}
+
+/* Main workspace / top bar */
+.main{background:transparent!important}
+.topbar{
+  background:rgba(255,255,255,.92)!important;
+  border-bottom:1px solid #e2e8f0!important;
+  box-shadow:0 4px 18px rgba(31,56,88,.035);
+}
+.eyebrow,.section-kicker{color:#71829a!important}
+.topbar h1{color:#172744!important}
+.profile-mini{background:#fff!important;color:#1b2d4b!important;border-color:#dce5ef!important;box-shadow:0 4px 14px rgba(31,56,88,.05)}
+.profile-mini>span:first-child{background:#e7f0ff!important;color:#1e4fa0}
+.profile-mini small{color:#6d7d93!important}
+
+.page{max-width:1320px!important}
+.page-intro h2,.panel h3,.job-card h3,.application-card h3,.skill-card h3,.resource-grid h3,.saved-profile-card h3,.prompt-panel h3,.interview-grid h3,.section-title h3{color:#172744!important}
+.page-intro p,.panel p,.job-card p,.application-card p,.skill-card p,.resource-grid p,.saved-profile-card p{color:#667892!important}
+
+/* Hero */
+.dashboard-hero{
+  background:linear-gradient(120deg,#ffffff 0%,#f5f9ff 58%,#eef8ff 100%)!important;
+  border:1px solid #dce7f3!important;
+  box-shadow:0 14px 34px rgba(31,56,88,.08)!important;
+  position:relative;overflow:hidden;
+}
+.dashboard-hero:after{content:"";position:absolute;right:-90px;top:-130px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(76,145,255,.16),rgba(76,145,255,0) 68%);pointer-events:none}
+.dashboard-hero h2{color:#102a63!important}
+.dashboard-hero p{color:#627594!important}
+.pill{background:#e8f1ff!important;color:#245ac2!important}
+.hero-actions{position:relative;z-index:1}
+.primary{background:linear-gradient(135deg,#2563eb,#1d4ed8)!important;color:#fff!important;border-color:#2563eb!important;box-shadow:0 8px 18px rgba(37,99,235,.18)}
+.secondary{background:#fff!important;color:#2458b8!important;border-color:#9ebcf0!important}
+.orbit-card{background:radial-gradient(circle,#edf5ff,#fff 68%)!important;border-color:#c9dcfb!important;box-shadow:0 0 55px rgba(74,137,220,.13)!important}
+.orbit-card b{color:#172744}
+.orbit-card span{color:#526681!important}
+.orbit-card small{color:#73839a!important}
+
+/* Metric cards */
+.stats-grid{gap:14px}
+.stat{background:#fff!important;border:1px solid #dfe7f1!important;box-shadow:0 8px 22px rgba(31,56,88,.055)!important}
+.stat span,.stat small{color:#71829a!important}
+.stat b{color:#172744!important}
+
+/* Universal panels/cards */
+.panel,.prompt-panel,.chat,.job-card,.application-card,.skill-card,.resource-grid article,.saved-profile-card,.plan-head,.match-card,.uni-card{
+  background:#fff!important;
+  color:#172744!important;
+  border:1px solid #dfe7f1!important;
+  box-shadow:0 9px 26px rgba(31,56,88,.055)!important;
+}
+.panel{border-radius:16px}
+.action-item,.diagnosis-card,.profile-chip,.result-card div,.chat-match,.timeline span,.pipe,.roadmap,.score-strip span,.day-card{
+  background:#f8fbff!important;
+  color:#334965!important;
+  border-color:#e0e8f1!important;
+}
+.action-item .icon{background:#e8f1ff!important;color:#2458bb!important}
+.action-item p,.diagnosis-card p,.pipe span,.profile-chip span,.result-card span,.chat-match p{color:#6c7d94!important}
+
+/* Forms */
+.form-grid label{color:#455a75!important}
+.form-grid input,.form-grid textarea,.form-grid select,.inline-search input,.composer input,#safetyText,.contact-lookup input,.contact-compose textarea,.edit-field select,.edit-field textarea{
+  background:#fff!important;color:#172744!important;border:1px solid #cbd7e4!important;
+}
+.form-grid input::placeholder,.form-grid textarea::placeholder,.inline-search input::placeholder,.composer input::placeholder,.contact-lookup input::placeholder,.contact-compose textarea::placeholder,#safetyText::placeholder{color:#99a7b9!important}
+.form-grid input:focus,.form-grid textarea:focus,.form-grid select:focus,.inline-search input:focus,.composer input:focus,#safetyText:focus,.contact-lookup input:focus,.contact-compose textarea:focus,.edit-field select:focus,.edit-field textarea:focus{border-color:#6695f3!important;box-shadow:0 0 0 4px rgba(37,99,235,.1)!important}
+
+/* AI chat */
+.chat{background:#fff!important}
+.bubble{background:#eef5ff!important;color:#29405f!important;border:1px solid #d8e6f8!important}
+.user .bubble{background:#e5efff!important;color:#1b4b91!important;border-color:#c9dcfb!important}
+.prompt-panel button{background:#f8fbff!important;color:#38506d!important;border:1px solid #dce5ef!important}
+.prompt-panel button:hover{background:#edf4ff!important;color:#17458e!important;border-color:#bfd3ef!important}
+.composer input{background:#fff!important;color:#172744!important}
+
+/* Opportunities */
+.job-card{background:#fff!important}
+.job-card p{color:#667892!important}
+.fit{color:#2563eb!important}
+.fit small{color:#73839a!important}
+.meta-row,.skill-row{color:#687b94!important}
+.tag{background:#f8fbff!important;color:#52657d!important;border-color:#dce5ef!important}
+.tag.good{color:#147151!important;border-color:#b9e2d2!important;background:#e8f7f0!important}
+.tag.gap{color:#875d0a!important;border-color:#ead8a8!important;background:#fff8e5!important}
+.roadmap{background:#f7faff!important;color:#5d708b!important;border-left-color:#6b97e5!important}
+
+/* Passport / profile */
+.profile-chip{background:#f8fbff!important}
+.profile-chip b{color:#203653!important}
+.profile-details span,.application-meta span{background:#f5f8fc!important;color:#334965!important}
+.profile-details b,.application-meta b{color:#71829a!important}
+
+/* Applications */
+.application-card{background:#fff!important}
+.application-meta{color:#71839b!important}
+.status-badge{background:#edf3f8!important;color:#35506d!important}
+.status-applied{background:#e8f0ff!important;color:#2458bb!important}
+.status-shortlisted{background:#e8f7f0!important;color:#147151!important}
+.status-interview{background:#fff3d6!important;color:#875d0a!important}
+.status-offer{background:#e6f5ef!important;color:#17664e!important}
+.status-rejected{background:#fdeaea!important;color:#a33e3e!important}
+.timeline span{background:#f7faff!important;color:#4f637c!important;border-color:#dce5ef!important}
+
+/* Resources / skills / interview */
+.resource-grid article{background:#fff!important}
+.resource-grid a,.text-btn{color:#2563eb!important}
+.skill-card{background:#fff!important}
+.number{color:#2563eb!important}
+.day-card{background:#f8fbff!important}
+.score-strip span{background:#f7faff!important;color:#526681!important;border-color:#dce5ef!important}
+
+/* Safety / alerts */
+.warning{background:#fff8e5!important;color:#7a560d!important;border-color:#ead8a8!important}
+.safe,.success{background:#e8f7f0!important;color:#17664e!important;border-color:#b9e2d2!important}
+.error{background:#fdeaea!important;color:#a33e3e!important;border-color:#efb6bd!important}
+.empty-state{background:#fbfdff!important;color:#71829a!important;border-color:#cbd8e6!important}
+
+/* Recruiter Connect */
+#recruiter .three-col .panel{background:linear-gradient(145deg,#fff,#f7fbff)!important;border:1px solid #dce6f0!important}
+#recruiter .three-col .panel .number{color:#2563eb!important}
+#recruiter .three-col .panel h3{color:#172744!important}
+#recruiter .three-col .panel p{color:#667892!important}
+
+/* Links / buttons */
+a{color:#2563eb}
+.text-btn{background:transparent!important;border:0!important}
+
+/* Remove dark surfaces left by the original theme */
+*[style*="background:#0"],*[style*="background:#1"]{color:#172744}
+footer{color:#8795a8!important}
+
+@media(max-width:950px){
+  .sidebar{width:78px!important}
+  .brand div:last-child,.nav span,.nav-label,.sidebar-foot{display:none}
+  .nav{justify-content:center}
+}
+@media(max-width:620px){.sidebar{display:none!important}}
+
+.topbar-tools{display:flex;align-items:center;gap:14px}
+.global-search{display:flex;align-items:center;gap:9px;width:min(390px,34vw);height:44px;padding:0 13px;border:1px solid #dce5ef;border-radius:13px;background:#fff;box-shadow:0 4px 14px rgba(31,56,88,.035)}
+.global-search span{font-size:21px;color:#5e7696;line-height:1}
+.global-search input{width:100%;border:0;outline:0;background:transparent;color:#203653;font:inherit;font-size:13px}
+.global-search input::placeholder{color:#94a2b5}
+@media(max-width:900px){.global-search{display:none}.topbar-tools{gap:0}}
