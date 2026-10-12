@@ -12,11 +12,13 @@ public class Main {
     private static final int PORT=Integer.parseInt(System.getProperty("port","8080"));
     private static final ChatService CHAT=new ChatService();
     private static final JobMatchService JOBS=new JobMatchService();
+    private static final ResumeMatchService RESUME_MATCH=new ResumeMatchService();
     private static final StudyAbroadService STUDY=new StudyAbroadService();
     private static final ResumeReviewService RESUMES=new ResumeReviewService();
     private static final RecruitmentService RECRUITMENT=new RecruitmentService();
     private static final CareerPortalService PORTAL=new CareerPortalService();
     private static final EmployerDirectoryService EMPLOYERS=new EmployerDirectoryService();
+    private static final EmailAuthService AUTH=new EmailAuthService();
     private static Path webRoot;
 
     public static void main(String[] args)throws Exception{
@@ -24,11 +26,15 @@ public class Main {
         webRoot=locateWebRoot();
         HttpServer server=HttpServer.create(new InetSocketAddress(PORT),0);
         server.createContext("/api/health",ex->sendJson(ex,200,"{\"status\":\"ok\",\"project\":\"PRJ_301\"}"));
+        server.createContext("/api/auth/me",Main::handleAuthMe);
+        server.createContext("/auth/email",Main::handleEmailLogin);
+        server.createContext("/auth/logout",Main::handleLogout);
         server.createContext("/api/intents",ex->{if(!"GET".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Method not allowed\"}");return;}sendJson(ex,200,JsonUtil.services(CHAT.services()));});
         server.createContext("/api/chat",Main::handleChat);
         server.createContext("/api/job-match",Main::handleJobMatch);
         server.createContext("/api/study-abroad",Main::handleStudyAbroad);
         server.createContext("/api/resume-review",Main::handleResumeReview);
+        server.createContext("/api/resume-match",Main::handleResumeMatch);
         server.createContext("/api/hr-contact",Main::handleHrContact);
         server.createContext("/api/interview",Main::handleInterview);
         server.createContext("/api/application",Main::handleApplication);
@@ -42,41 +48,84 @@ public class Main {
     }
 
     private static void handleChat(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
         if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}
         sendJson(ex,200,JsonUtil.chatResponse(CHAT.chat(JsonUtil.extractMessage(readBody(ex)))));
     }
     private static void handleJobMatch(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
         if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}
         String b=readBody(ex);
         sendJson(ex,200,JsonUtil.jobMatches(JOBS.match(JsonUtil.extractString(b,"degree"),JsonUtil.extractString(b,"skills"),JsonUtil.extractString(b,"interests"),JsonUtil.extractString(b,"preferredRole"),JsonUtil.extractString(b,"location"),JsonUtil.extractString(b,"workMode"))));
     }
     private static void handleResumeReview(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
         if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}String b=readBody(ex);
         sendJson(ex,200,JsonUtil.resumeReview(RESUMES.review(JsonUtil.extractString(b,"resumeText"),JsonUtil.extractString(b,"targetRole"))));
     }
+    private static void handleResumeMatch(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
+        if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}
+        String b=readBody(ex);
+        String resume=JsonUtil.extractString(b,"resumeText");
+        if(resume.isBlank()){sendJson(ex,400,"{\"error\":\"Upload or paste a résumé before matching.\"}");return;}
+        var result=RESUME_MATCH.analyze(resume,JsonUtil.extractString(b,"preferredLocation"),JsonUtil.extractString(b,"workMode"),JOBS);
+        sendJson(ex,200,JsonUtil.resumeMatch(result));
+    }
     private static void handleHrContact(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
         if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}String b=readBody(ex);
         String email=JsonUtil.extractString(b,"email");if(!email.contains("@")){sendJson(ex,400,"{\"error\":\"Enter a valid email address\"}");return;}
         sendJson(ex,201,JsonUtil.contact(RECRUITMENT.contact(JsonUtil.extractString(b,"candidateName"),email,JsonUtil.extractString(b,"role"),JsonUtil.extractString(b,"message"))));
     }
     private static void handleInterview(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
         if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}String b=readBody(ex);
         sendJson(ex,201,JsonUtil.interview(RECRUITMENT.schedule(JsonUtil.extractString(b,"candidateName"),JsonUtil.extractString(b,"candidateEmail"),JsonUtil.extractString(b,"hrName"),JsonUtil.extractString(b,"scheduledAt"),JsonUtil.extractString(b,"meetUrl"),JsonUtil.extractString(b,"notes"))));
     }
     private static void handleApplication(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
         if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}String b=readBody(ex);
         String email=JsonUtil.extractString(b,"email");if(!email.contains("@")){sendJson(ex,400,"{\"error\":\"Enter a valid candidate email\"}");return;}
         sendJson(ex,201,JsonUtil.application(PORTAL.add(JsonUtil.extractString(b,"candidateName"),email,JsonUtil.extractString(b,"role"),JsonUtil.extractString(b,"company"),JsonUtil.extractString(b,"location"),JsonUtil.extractString(b,"status"),JsonUtil.extractString(b,"notes"))));
     }
     private static void handleHrDirectory(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
         if(!"GET".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use GET\"}");return;}
         sendJson(ex,200,JsonUtil.employerContacts(EMPLOYERS.contacts()));
     }
     private static void handleStudyAbroad(HttpExchange ex)throws IOException{
+        if(!requireAuth(ex))return;
         if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}
         String b=readBody(ex);
         sendJson(ex,200,JsonUtil.studyPlan(STUDY.plan(JsonUtil.extractString(b,"country"),JsonUtil.extractString(b,"course"),JsonUtil.extractDouble(b,"cgpa",0),JsonUtil.extractString(b,"budget"),JsonUtil.extractString(b,"intake"))));
     }
+
+    private static boolean requireAuth(HttpExchange ex)throws IOException{
+        if(AUTH.current(ex)!=null)return true;
+        sendJson(ex,401,"{\"error\":\"Authentication required.\"}");
+        return false;
+    }
+    private static void handleAuthMe(HttpExchange ex)throws IOException{
+        if(!"GET".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use GET\"}");return;}
+        EmailAuthService.User u=AUTH.current(ex);
+        if(u==null){sendJson(ex,401,"{\"authenticated\":false}");return;}
+        StringBuilder b=new StringBuilder("{\"authenticated\":true,");
+        field(b,"email",u.email()).append(',');field(b,"name",u.name()).append(',');field(b,"picture","");b.append('}');
+        sendJson(ex,200,b.toString());
+    }
+    private static void handleEmailLogin(HttpExchange ex)throws IOException{
+        if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}
+        String email=JsonUtil.extractString(readBody(ex),"email").trim();
+        if(!AUTH.isValidEmail(email)){sendJson(ex,400,"{\"error\":\"Please enter a valid .com email address. Email ownership must be verified separately.\"}");return;}
+        String sid=AUTH.createSession(email);
+        AUTH.setSessionCookie(ex,sid);
+        sendJson(ex,200,"{\"authenticated\":true}");
+    }
+    private static void handleLogout(HttpExchange ex)throws IOException{AUTH.logout(ex);redirect(ex,"/");}
+    private static String query(String q,String key){if(q==null)return "";for(String p:q.split("&")){String[] x=p.split("=",2);if(x.length==2&&java.net.URLDecoder.decode(x[0],StandardCharsets.UTF_8).equals(key))return java.net.URLDecoder.decode(x[1],StandardCharsets.UTF_8);}return "";}
+    private static void redirect(HttpExchange ex,String location)throws IOException{ex.getResponseHeaders().set("Location",location);ex.sendResponseHeaders(302,-1);ex.close();}
+    private static StringBuilder field(StringBuilder sb,String k,String v){return sb.append('\"').append(k).append("\":\"").append(v==null?"":v.replace("\\","\\\\").replace("\"","\\\"")).append('\"');}
     private static String readBody(HttpExchange ex)throws IOException{return new String(ex.getRequestBody().readAllBytes(),StandardCharsets.UTF_8);}
     private static void serveStatic(HttpExchange ex)throws IOException{
         String path=ex.getRequestURI().getPath();if("/".equals(path))path="/index.html";

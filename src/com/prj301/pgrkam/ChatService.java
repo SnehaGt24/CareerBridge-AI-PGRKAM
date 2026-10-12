@@ -52,6 +52,20 @@ public class ChatService {
         String response = tailoredResponse(normalized, service);
         String secondaryLabel = secondaryLabel(service.intent());
         String secondaryPage = secondaryPage(service.intent());
+        if ((normalized.contains("resume") || normalized.contains("résumé")) && (normalized.contains("job") || normalized.contains("jobs") || normalized.contains("role") || normalized.contains("roles"))) { secondaryLabel = "Upload résumé + match jobs"; secondaryPage = "resume"; }
+        if ("PRIVATE_JOB".equals(service.intent())) {
+            // PGRKAM links to its separate official vacancy-search portal. Pass the role/location
+            // as search parameters so the user lands on relevant vacancy results, not a generic info page.
+            String roleQuery = extractRoleQuery(message);
+            String locationQuery = extractLocationQuery(message);
+            String targetedUrl = PgrkamUrl.vacancySearch(roleQuery, locationQuery);
+            ServiceInfo targeted = new ServiceInfo(service.intent(), service.serviceName(), service.description(),
+                    "View matching vacancies on PGRKAM", targetedUrl, service.examples());
+            String tailored = response + " I’ve prepared an official PGRKAM vacancy search for " + roleQuery
+                    + (locationQuery.isBlank() ? "" : " near " + locationQuery)
+                    + ". Review the listed vacancy and employer advertisement for exact eligibility and deadlines.";
+            return response(tailored, service.intent(), p.confidence(), targeted, secondaryLabel, secondaryPage, p.alternatives());
+        }
         return response(response, service.intent(), p.confidence(), service, secondaryLabel, secondaryPage, p.alternatives());
     }
 
@@ -60,6 +74,38 @@ public class ChatService {
                                   List<IntentClassifier.Result> alternatives) {
         return new ChatResponse(message, intent, confidence, service.serviceName(), service.description(),
                 service.actionLabel(), service.modulePath(), secondaryLabel, secondaryPage, alternatives);
+    }
+
+
+    private static String extractRoleQuery(String message) {
+        String q = message == null ? "" : message.toLowerCase(Locale.ROOT);
+        String[][] known = {
+            {"java backend developer", "Java Backend Developer"}, {"backend developer", "Backend Developer"},
+            {"java developer", "Java Developer"}, {"software developer", "Software Developer"},
+            {"software engineer", "Software Engineer"}, {"full stack developer", "Full Stack Developer"},
+            {"frontend developer", "Frontend Developer"}, {"front end developer", "Frontend Developer"},
+            {"web developer", "Web Developer"}, {"data analyst", "Data Analyst"},
+            {"business analyst", "Business Analyst"}, {"data scientist", "Data Scientist"},
+            {"qa engineer", "QA Engineer"}, {"testing engineer", "Testing Engineer"},
+            {"cloud support", "Cloud Support"}, {"soc analyst", "SOC Analyst"},
+            {"cybersecurity analyst", "Cybersecurity Analyst"}, {"accountant", "Accountant"},
+            {"sales executive", "Sales Executive"}, {"customer support", "Customer Support"},
+            {"graphic designer", "Graphic Designer"}, {"hr executive", "HR Executive"}
+        };
+        for (String[] pair : known) if (q.contains(pair[0])) return pair[1];
+        String cleaned = q.replaceAll("[^a-z0-9\\s+#.-]", " ")
+                .replaceAll("\\b(i am|im|i'm|looking for|find|search for|show me|please|can you|could you|jobs?|vacancies|openings|near|in|at|my|a|an|the|for|with|me|want|to|get|related|suitable|matching)\\b", " ")
+                .replaceAll("\\s+", " ").trim();
+        return cleaned.isBlank() ? "Jobs" : cleaned.substring(0, Math.min(cleaned.length(), 70)).trim();
+    }
+
+    private static String extractLocationQuery(String message) {
+        String q = message == null ? "" : message.toLowerCase(Locale.ROOT);
+        String[] cities = {"Bengaluru", "Bangalore", "Mysuru", "Mysore", "Mangaluru", "Mangalore", "Hubballi", "Chandigarh", "Mohali", "Amritsar", "Ludhiana", "Jalandhar", "Patiala", "Remote"};
+        for (String city : cities) if (q.contains(city.toLowerCase(Locale.ROOT)) || (city.equals("Bengaluru") && q.contains("bangalore"))) {
+            return city.equals("Bangalore") ? "Bengaluru" : city.equals("Mysore") ? "Mysuru" : city.equals("Mangalore") ? "Mangaluru" : city;
+        }
+        return "";
     }
 
     private String tailoredResponse(String q, ServiceInfo s) {
@@ -82,7 +128,7 @@ public class ChatService {
             case "GOVT_JOB" -> "Use PGRKAM's employment services to check current vacancy information and eligibility details for government/public-sector opportunities. Always verify the vacancy notice and deadline before applying.";
             case "SELF_EMPLOYMENT" -> "PGRKAM supports self-employment and entrepreneurship guidance. Start with the official service information, then use CareerBridge to organise your goals, skills and next steps.";
             case "FOREIGN_JOB" -> "PGRKAM provides overseas-employment information and support. Start with the official overseas employment information, verify the employer or recruiting channel, and do not pay unverified recruitment fees.";
-            case "FOREIGN_STUDY" -> "PGRKAM provides information related to overseas study and employment services. Start with the official portal and verify institution, eligibility, fees and application requirements independently.";
+            case "FOREIGN_STUDY" -> "Use CareerBridge Study Abroad Match to shortlist university profiles from your course, CGPA, country and budget. Then verify the exact programme requirements, documents, deadlines and visa rules on the official university/government pages.";
             case "JOB_MELA" -> "PGRKAM publishes employment-service information and recruitment activities. Open the official service page to check current job-mela or recruitment-drive information and eligibility.";
             case "ARMED_FORCES" -> "PGRKAM provides information related to armed-forces career opportunities. Open the official information and verify the current recruitment notification and eligibility before applying.";
             default -> s.description();
@@ -94,7 +140,8 @@ public class ChatService {
             case "PRIVATE_JOB", "GOVT_JOB", "JOB_MELA" -> "Open CareerBridge Opportunities";
             case "CAREER_GUIDANCE", "COUNSELLING" -> "Build a Career Plan";
             case "SELF_EMPLOYMENT" -> "Open CareerBridge Career Plan";
-            case "FOREIGN_JOB", "FOREIGN_STUDY" -> "Open CareerBridge Resources";
+            case "FOREIGN_JOB" -> "Open CareerBridge Resources";
+            case "FOREIGN_STUDY" -> "Open Study Abroad Match";
             default -> "Open CareerBridge";
         };
     }
@@ -103,7 +150,8 @@ public class ChatService {
         return switch (intent) {
             case "PRIVATE_JOB", "GOVT_JOB", "JOB_MELA" -> "opportunities";
             case "CAREER_GUIDANCE", "COUNSELLING" -> "dashboard";
-            case "SELF_EMPLOYMENT", "FOREIGN_JOB", "FOREIGN_STUDY", "ARMED_FORCES" -> "resources";
+            case "SELF_EMPLOYMENT", "FOREIGN_JOB", "ARMED_FORCES" -> "resources";
+            case "FOREIGN_STUDY" -> "study";
             default -> "dashboard";
         };
     }
@@ -118,7 +166,12 @@ public class ChatService {
         if (q.contains("job mela") || q.contains("job fair") || q.contains("recruitment drive")) return "JOB_MELA";
         if (q.contains("self employment") || q.contains("start my own business") || q.contains("entrepreneur")) return "SELF_EMPLOYMENT";
         if (q.contains("job abroad") || q.contains("work abroad") || q.contains("overseas employment")) return "FOREIGN_JOB";
-        if (q.contains("study abroad") || q.contains("masters abroad") || q.contains("study overseas")) return "FOREIGN_STUDY";
+        if ((q.contains("resume") || q.contains("résumé")) && (q.contains("job") || q.contains("jobs") || q.contains("role") || q.contains("roles"))) return "PRIVATE_JOB";
+        if (q.contains("study abroad") || q.contains("masters abroad") || q.contains("study overseas") || q.contains("which universities") || q.contains("university can i apply")) return "FOREIGN_STUDY";
+        if ((q.contains("job") || q.contains("jobs") || q.contains("vacancy") || q.contains("vacancies") || q.contains("opening") || q.contains("openings"))
+                && (q.contains("analyst") || q.contains("developer") || q.contains("engineer") || q.contains("designer")
+                || q.contains("accountant") || q.contains("sales") || q.contains("support") || q.contains("data")
+                || q.contains("cloud") || q.contains("security") || q.contains("testing") || q.contains("hr "))) return "PRIVATE_JOB";
         return null;
     }
 
