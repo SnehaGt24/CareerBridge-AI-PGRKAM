@@ -1,33 +1,70 @@
-# Upgraded PRJ_301
+# CareerBridge AI — Updated Project Notes
 
-Suggested title:
-**AI-Powered Smart Employment, Career and Study Abroad Assistance System for PGRKAM**
+## New product direction — September 2026
 
-Demo:
-- Smart assistant: "I want a private software job."
-- Job Copilot: B.Tech CSE + Java, SQL, Git → ranked roles + missing skills.
-- Study Abroad: UK + Data Science + 7.5 CGPA → example universities + document checklist + application roadmap.
-- Out-of-scope: "Who won yesterday's cricket match?"
+The prototype now uses the student's résumé as a primary starting point:
 
-Future additions:
-- Resume PDF parsing
-- Login/user profiles
-- Live job APIs with authorised access
-- Live university/course feeds
-- Scholarships
-- Application tracker
-- Multilingual support
-- Cloud deployment
+**Upload résumé → extract profile signals → match role types → prioritise preferred location → verify current PGRKAM vacancy → apply / prepare**
 
-## AI Career Copilot update — September 2026
-- Copilot now produces tailored answers for common student career questions instead of generic service-only replies.
-- PGRKAM navigation is now visible in every supported Copilot response through an official-service action button.
-- Private-job questions link to the current PGRKAM vacancies page.
-- Career-choice, Spring Boot skill-gap and graduation-plan questions link to PGRKAM Vocational Guidance.
-- Government/private/job-mela questions also provide a CareerBridge follow-up action.
-- Added deterministic intent hints for common student phrasing so relevant questions do not incorrectly fall into OUT_OF_SCOPE.
-- Out-of-scope responses remain focused on employment/PGRKAM navigation.
+A second path strengthens the study-abroad module:
 
-## UI update — full light theme
+**Career Passport → university profile matching → eligibility guidance → documents → application steps → official university/government links**
 
-The website now uses a fully light, readable interface across the sidebar, top bar, dashboard, cards, forms, AI chat, opportunities, Career Passport, applications, recruiter tools, skill plan, interview coach, PGRKAM resources, and safety checks. Dark navy/black panels were removed in favor of white surfaces, pale blue backgrounds, blue accents, subtle borders, and soft shadows. The top bar also includes a light search field for jobs, skills, or questions.
+## Resume-to-job matching
+
+`ResumeMatchService` performs lightweight local extraction from résumé text. It detects common degree terms, technical skills, experience signals and common locations. It then calls `JobMatchService` to produce explainable role matches.
+
+The matcher reports:
+- resume / role fit score
+- matched skills
+- missing skills
+- preferred-location match
+- remote availability
+- work mode
+- preparation roadmap
+- official PGRKAM vacancy hub link
+
+The location ordering is intentionally transparent: an exact preferred-city match gets the highest location priority, a remote-compatible role gets a secondary priority, and other locations remain available without claiming physical distance or guaranteed availability.
+
+## PGRKAM boundary
+
+The prototype does **not** claim to ingest the live PGRKAM vacancy database. The PGRKAM vacancies page itself tells candidates to check the employer/advertisement for current eligibility, deadline and other details. Therefore the UI labels the internal role catalogue as a prototype match and sends the user to the official PGRKAM vacancy hub for verification.
+
+## Study Abroad matching
+
+`StudyAbroadService` now returns detailed university profile records containing:
+- university, city, country and institution type
+- representative programme areas
+- duration/intake guidance
+- profile-match heuristic
+- academic eligibility guidance
+- language requirement guidance
+- test requirement guidance
+- work-experience guidance
+- document checklist
+- step-by-step application guidance
+- official university/application URL
+- official country-level study/visa guidance URL
+
+The university data is deliberately phrased as guidance rather than a promise of admission. Exact requirements must be checked on the selected programme's official page.
+
+## AI Career Copilot
+
+The Copilot still provides official PGRKAM navigation, and it now also points supported queries toward the new workflows:
+- resume + job/role questions → Resume + Job Match
+- study abroad / university questions → Study Abroad Match
+- private/government/job-mela questions → Opportunities + PGRKAM
+- career-choice questions → PGRKAM vocational guidance
+
+## Existing modules retained
+
+Career Passport, manual Opportunities, Apply Smart, Applications, Recruiter Connect, Resume Review, Skill Plan, Interview Coach, PGRKAM Resources and Job Safety Check remain part of the project.
+
+## Validation completed
+
+- Java compilation succeeds with the JDK HTTP server stack.
+- Built-in Copilot intent suite remains 6/6 (100% demo accuracy).
+- `/api/resume-match` returns extracted profile signals and role matches.
+- `/api/study-abroad` returns detailed university records and application guidance.
+- Browser-side JavaScript passes `node --check`.
+- The application keeps the existing light UI.
