@@ -446,3 +446,65 @@ footer{color:#8795a8!important}
 /* Simplified sidebar after removing duplicate branding and footer label */
 .sidebar #mainNav{padding-top:18px}
 .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+
+/* Career Copilot: prioritize the conversation and keep suggested prompts compact. */
+#assistant .assistant-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 220px;
+  gap:14px;
+  align-items:start;
+}
+#assistant .chat{
+  height: min(70vh, 760px);
+  min-height:620px;
+  padding:20px;
+}
+#assistant .prompt-panel{
+  padding:12px;
+  max-width:220px;
+}
+#assistant .prompt-panel h3{
+  font-size:16px;
+  margin:2px 0 10px;
+}
+#assistant .prompt-panel button{
+  padding:9px 10px;
+  margin:6px 0;
+  font-size:13px;
+  line-height:1.35;
+}
+#assistant .assistant-action-stack{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+  margin-top:14px;
+}
+#assistant .assistant-action-stack a,
+#assistant .assistant-action-stack button{
+  margin:0;
+  max-width:100%;
+  white-space:normal;
+  text-align:left;
+}
+#assistant .composer{
+  margin-top:14px;
+}
+@media(max-width:900px){
+  #assistant .assistant-layout{grid-template-columns:minmax(0,1fr) 190px;gap:10px}
+  #assistant .chat{min-height:540px;height:65vh}
+  #assistant .prompt-panel{max-width:190px}
+}
+@media(max-width:680px){
+  #assistant .assistant-layout{grid-template-columns:minmax(0,1fr)}
+  #assistant .chat{height:58vh;min-height:420px;padding:14px}
+  #assistant .prompt-panel{max-width:none}
+  #assistant .prompt-panel button{display:inline-block;width:calc(50% - 8px);vertical-align:top;margin:4px}
+  #assistant .assistant-action-stack{align-items:stretch}
+  #assistant .assistant-action-stack a,
+  #assistant .assistant-action-stack button{width:100%;justify-content:center}
+}
+
+/* Saved Career Passport -> Opportunities workflow */
+.opportunity-profile-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 12px}.opportunity-profile-actions .muted{font-size:.9rem}.source-note{padding:14px;margin-bottom:14px}.source-note p{margin:6px 0 0}

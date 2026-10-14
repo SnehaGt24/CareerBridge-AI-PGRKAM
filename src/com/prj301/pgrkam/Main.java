@@ -117,7 +117,7 @@ public class Main {
     private static void handleEmailLogin(HttpExchange ex)throws IOException{
         if(!"POST".equals(ex.getRequestMethod())){sendJson(ex,405,"{\"error\":\"Use POST\"}");return;}
         String email=JsonUtil.extractString(readBody(ex),"email").trim();
-        if(!AUTH.isValidEmail(email)){sendJson(ex,400,"{\"error\":\"Please enter a valid .com email address. Email ownership must be verified separately.\"}");return;}
+        if(!AUTH.isValidEmail(email)){sendJson(ex,400,"{\"error\":\"Please enter a valid email address.\"}");return;}
         String sid=AUTH.createSession(email);
         AUTH.setSessionCookie(ex,sid);
         sendJson(ex,200,"{\"authenticated\":true}");
@@ -142,8 +142,38 @@ public class Main {
     private static String contentType(String n){if(n.endsWith(".html"))return"text/html; charset=utf-8";if(n.endsWith(".css"))return"text/css; charset=utf-8";if(n.endsWith(".js")||n.endsWith(".mjs"))return"application/javascript; charset=utf-8";if(n.endsWith(".json"))return"application/json; charset=utf-8";return"application/octet-stream";}
     private static void sendJson(HttpExchange ex,int status,String json)throws IOException{byte[] b=json.getBytes(StandardCharsets.UTF_8);ex.getResponseHeaders().set("Content-Type","application/json; charset=utf-8");ex.sendResponseHeaders(status,b.length);ex.getResponseBody().write(b);ex.close();}
     private static void evaluate(){
-        record T(String q,String e){} List<T> ts=List.of(new T("I want a private software developer role","PRIVATE_JOB"),new T("government recruitment vacancies","GOVT_JOB"),new T("I want a job abroad","FOREIGN_JOB"),new T("I want to do masters overseas","FOREIGN_STUDY"),new T("join the army","ARMED_FORCES"),new T("recommend a movie","OUT_OF_SCOPE"));
-        int c=0;for(T t:ts){var p=CHAT.classifier().predict(t.q());boolean ok=t.e().equals(p.intent());if(ok)c++;System.out.printf("%-42s %-16s %-16s %.3f %s%n",t.q(),t.e(),p.intent(),p.confidence(),ok?"✓":"✗");}
-        System.out.printf("%nDemo intent accuracy: %.1f%% (%d/%d)%n",100.0*c/ts.size(),c,ts.size());
+        record T(String q,String intent,String page,String urlPart){}
+        List<T> ts=List.of(
+            new T("I am looking for a private software developer job","PRIVATE_JOB","opportunities","/private-jobs"),
+            new T("Show me government job vacancies","GOVT_JOB","opportunities","/govt-jobs"),
+            new T("I want to join the Indian Army","ARMED_FORCES","resources","employment-services-related-to-candidates"),
+            new T("I want to pursue my master's degree in Germany","FOREIGN_STUDY","study","foreign-module-info"),
+            new T("What are the admission requirements for a master's in computer science in Germany?","FOREIGN_STUDY","study","foreign-module-info"),
+            new T("Help me choose a career after my CSE degree","CAREER_GUIDANCE","skills","vocational-guidance"),
+            new T("I need help improving my resume","RESUME_REVIEW","resume",""),
+            new T("Take me to resume matching","RESUME_MATCH","resume",""),
+            new T("Find entry-level Java developer jobs in Bengaluru","PRIVATE_JOB","opportunities","/private-jobs"),
+            new T("I am a fresher with HTML, CSS, JavaScript and React skills. What jobs should I apply for?","PRIVATE_JOB","opportunities","/private-jobs"),
+            new T("I want an internship in Python development","PRIVATE_JOB","opportunities","/private-jobs"),
+            new T("I know Python but not Java. Which developer roles should I consider?","PRIVATE_JOB","opportunities","/private-jobs"),
+            new T("What projects should I build to strengthen my fresher resume?","CAREER_GUIDANCE","skills","vocational-guidance"),
+            new T("What are the admission requirements for a master's in computer science in Germany?","FOREIGN_STUDY","study","foreign-module-info"),
+            new T("Show me jobs for women","WOMEN_JOBS","resources","gender=1"),
+            new T("Find jobs for persons with disabilities","PWD_JOBS","resources","pwd=1"),
+            new T("I want to start my own business","SELF_EMPLOYMENT","resources","/self-employment"),
+            new T("Show me counselling sessions","COUNSELLING","skills","/counselling-sessions"),
+            new T("Tell me about PM VIKAS scheme","PM_VIKAS","resources","/pm-vikas-scheme"),
+            new T("Tell me about MBA FPI Girls","MBA_FPI_GIRLS","resources","mbafpigirls.in"),
+            new T("Recommend a movie for tonight","OUT_OF_SCOPE","","")
+        );
+        int passed=0;
+        for(T t:ts){
+            ChatService.ChatResponse r=CHAT.chat(t.q());
+            boolean ok=t.intent().equals(r.intent())&&t.page().equals(r.secondaryPage())&&(t.urlPart().isBlank()||r.modulePath().contains(t.urlPart()));
+            if(ok)passed++;
+            System.out.printf("%-72s expected=%-16s actual=%-16s page=%-14s %s%n",t.q(),t.intent(),r.intent(),r.secondaryPage(),ok?"PASS":"FAIL");
+        }
+        System.out.printf("Copilot routing: %d/%d passed (%.1f%%)%n",passed,ts.size(),100.0*passed/ts.size());
+        if(passed!=ts.size()) System.exit(1);
     }
 }
