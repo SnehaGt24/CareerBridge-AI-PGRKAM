@@ -11,23 +11,23 @@ public class JobMatchService {
 
     private final List<JobRole> roles = List.of(
         new JobRole("Java Backend Developer","Build APIs, business logic and database-backed services using Java.",
-            List.of("java","spring","sql","rest","git"),List.of("Bengaluru","Mysuru","Mangaluru"),"Hybrid","Full-time",PgrkamUrl.vacancySearch("Java Backend Developer", "")),
+            List.of("java","spring","sql","rest","git"),List.of("Bengaluru","Mysuru","Mangaluru"),"Hybrid","Full-time","https://cms.pgrkam.com/vacancies"),
         new JobRole("Full Stack Developer","Build frontend interfaces and backend APIs for web applications.",
-            List.of("java","spring","javascript","html","css","sql","git"),List.of("Bengaluru","Hubballi","Remote"),"Hybrid","Full-time",PgrkamUrl.vacancySearch("Full Stack Developer", "")),
+            List.of("java","spring","javascript","html","css","sql","git"),List.of("Bengaluru","Hubballi","Remote"),"Hybrid","Full-time","https://cms.pgrkam.com/vacancies"),
         new JobRole("Data Analyst","Clean, analyse and visualise business data to support decisions.",
-            List.of("sql","excel","python","power bi","statistics"),List.of("Bengaluru","Mysuru","Remote"),"Hybrid","Full-time",PgrkamUrl.vacancySearch("Data Analyst", "")),
+            List.of("sql","excel","python","power bi","statistics"),List.of("Bengaluru","Mysuru","Remote"),"Hybrid","Full-time","https://cms.pgrkam.com/vacancies"),
         new JobRole("Business Analyst","Translate business needs into requirements, insights and process improvements.",
-            List.of("requirements","communication","sql","excel","power bi"),List.of("Bengaluru","Mangaluru","Remote"),"On-site / Hybrid","Full-time",PgrkamUrl.vacancySearch("Business Analyst", "")),
+            List.of("requirements","communication","sql","excel","power bi"),List.of("Bengaluru","Mangaluru","Remote"),"On-site / Hybrid","Full-time","https://cms.pgrkam.com/vacancies"),
         new JobRole("Frontend Developer","Create responsive web interfaces and user experiences.",
-            List.of("javascript","html","css","react","git"),List.of("Bengaluru","Remote"),"Remote / Hybrid","Full-time",PgrkamUrl.vacancySearch("Frontend Developer", "")),
+            List.of("javascript","html","css","react","git"),List.of("Bengaluru","Remote"),"Remote / Hybrid","Full-time","https://cms.pgrkam.com/vacancies"),
         new JobRole("QA / Automation Engineer","Test applications manually and through automation.",
-            List.of("testing","selenium","java","api","sql"),List.of("Bengaluru","Mysuru"),"Hybrid","Full-time",PgrkamUrl.vacancySearch("QA Automation Engineer", "")),
+            List.of("testing","selenium","java","api","sql"),List.of("Bengaluru","Mysuru"),"Hybrid","Full-time","https://cms.pgrkam.com/vacancies"),
         new JobRole("Cloud Support Associate","Support cloud-hosted systems, networking, Linux and deployment operations.",
-            List.of("linux","networking","cloud","aws","azure"),List.of("Bengaluru","Remote"),"Hybrid / Shifts","Full-time",PgrkamUrl.vacancySearch("Cloud Support Associate", "")),
+            List.of("linux","networking","cloud","aws","azure"),List.of("Bengaluru","Remote"),"Hybrid / Shifts","Full-time","https://cms.pgrkam.com/vacancies"),
         new JobRole("Junior Data Scientist","Apply statistics and machine learning to data-driven problems.",
-            List.of("python","sql","statistics","machine learning","pandas"),List.of("Bengaluru","Remote"),"Hybrid","Full-time",PgrkamUrl.vacancySearch("Junior Data Scientist", "")),
+            List.of("python","sql","statistics","machine learning","pandas"),List.of("Bengaluru","Remote"),"Hybrid","Full-time","https://cms.pgrkam.com/vacancies"),
         new JobRole("SOC Analyst","Monitor alerts, investigate threats and support incident response.",
-            List.of("networking","linux","siem","security","incident response"),List.of("Bengaluru","Mysuru","Remote"),"On-site / Shifts","Full-time",PgrkamUrl.vacancySearch("SOC Analyst", ""))
+            List.of("networking","linux","siem","security","incident response"),List.of("Bengaluru","Mysuru","Remote"),"On-site / Shifts","Full-time","https://cms.pgrkam.com/vacancies")
     );
 
     public List<Match> match(String degree, String skillsText, String interests, String preferredRole, String location, String workMode) {
@@ -61,8 +61,8 @@ public class JobMatchService {
                 : "Priority learning: " + String.join(", ", missing.subList(0, Math.min(3, missing.size()))) +
                   ". Then build a small project using these skills and update your resume.";
             matches.add(new Match(role.title(), score, role.description(), matched, missing, locationFit,
-                role.workMode(), role.employmentType(), roadmap, PgrkamUrl.vacancySearch(role.title(), location), locationPriority,
-                "Opens the official PGRKAM vacancy search filtered by this role; confirm the live listing and employer advertisement before applying"));
+                role.workMode(), role.employmentType(), roadmap, role.pgrkamUrl(), locationPriority,
+                "PGRKAM vacancy hub — verify the current live vacancy and employer advertisement before applying"));
         }
         matches.sort(Comparator.comparingInt(Match::locationPriority).reversed().thenComparing(Comparator.comparingInt(Match::score).reversed()));
         return matches.subList(0,Math.min(6,matches.size()));

@@ -18,10 +18,7 @@ public final class EmailAuthService {
     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
 
     public boolean isValidEmail(String email) {
-        if (email == null || email.length() > 254 || !EMAIL.matcher(email.trim()).matches()) return false;
-        // CareerBridge demo policy requested by the project owner: accept .com addresses only.
-        // This checks the address format/domain suffix, not ownership of the mailbox.
-        return email.trim().toLowerCase(java.util.Locale.ROOT).matches(".*\\.com$");
+        return email != null && email.length() <= 254 && EMAIL.matcher(email.trim()).matches();
     }
 
     public String createSession(String email) {
